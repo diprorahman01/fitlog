@@ -1,12 +1,12 @@
 import Hero from "@/components/Hero";
+import WorkoutLibrary from "@/components/WorkoutLibrary";
 
 export default function Home() {
   return (
     <>
       <Hero />
 
-      {/* Workout Library will be added here next */}
-      <section id="workouts"></section>
+      <WorkoutLibrary />
     </>
   );
 }
