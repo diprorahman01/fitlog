@@ -18,8 +18,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className="min-h-screen bg-[#0b0d10] text-white">
+    <html
+      lang="en"
+      suppressHydrationWarning
+    >
+      <body
+        suppressHydrationWarning
+        className="min-h-screen bg-[#0b0d10] text-white"
+      >
         <WorkoutProvider>
           <div className="flex min-h-screen flex-col">
             <Navbar />
