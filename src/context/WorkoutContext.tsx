@@ -16,7 +16,7 @@ interface WorkoutContextType {
   completedWorkoutIds: number[];
   isLoaded: boolean;
 
-  addToPlan: (workout: Workout) => void;
+  addToPlan: (workout: Workout) => boolean;
   removeFromPlan: (id: number) => void;
 
   addToSaved: (workout: Workout) => void;
@@ -29,9 +29,9 @@ interface WorkoutContextType {
   isDone: (id: number) => boolean;
 }
 
-const WorkoutContext = createContext<WorkoutContextType | undefined>(
-  undefined
-);
+const WorkoutContext = createContext<
+  WorkoutContextType | undefined
+>(undefined);
 
 interface WorkoutProviderProps {
   children: ReactNode;
@@ -40,73 +40,62 @@ interface WorkoutProviderProps {
 export const WorkoutProvider = ({
   children,
 }: WorkoutProviderProps) => {
-  const [todaysPlan, setTodaysPlan] = useState<Workout[]>([]);
-  const [savedWorkouts, setSavedWorkouts] = useState<Workout[]>([]);
-  const [completedWorkoutIds, setCompletedWorkoutIds] = useState<
-    number[]
-  >([]);
+  const [todaysPlan, setTodaysPlan] =
+    useState<Workout[]>([]);
 
-  const [isLoaded, setIsLoaded] = useState(false);
+  const [savedWorkouts, setSavedWorkouts] =
+    useState<Workout[]>([]);
 
-  // ==================================================
-  // LOAD DATA FROM LOCAL STORAGE
-  // ==================================================
+  const [
+    completedWorkoutIds,
+    setCompletedWorkoutIds,
+  ] = useState<number[]>([]);
+
+  const [isLoaded, setIsLoaded] =
+    useState(false);
+
+  // ==========================================
+  // LOAD LOCAL STORAGE
+  // ==========================================
   useEffect(() => {
     const loadStoredData = () => {
-      const storedPlan = localStorage.getItem("fitlog-plan");
-      const storedSaved = localStorage.getItem("fitlog-saved");
-      const storedCompleted =
-        localStorage.getItem("fitlog-completed");
+      const storedPlan =
+        localStorage.getItem("fitlog-plan");
 
-      // Today's Plan
+      const storedSaved =
+        localStorage.getItem("fitlog-saved");
+
+      const storedCompleted =
+        localStorage.getItem(
+          "fitlog-completed"
+        );
+
       if (storedPlan) {
         try {
-          const parsedPlan: Workout[] =
-            JSON.parse(storedPlan);
-
-          setTodaysPlan(parsedPlan);
-        } catch (error) {
-          console.error(
-            "Failed to load today's plan:",
-            error
+          setTodaysPlan(
+            JSON.parse(storedPlan)
           );
-
+        } catch {
           setTodaysPlan([]);
         }
       }
 
-      // Saved Workouts
       if (storedSaved) {
         try {
-          const parsedSaved: Workout[] =
-            JSON.parse(storedSaved);
-
-          setSavedWorkouts(parsedSaved);
-        } catch (error) {
-          console.error(
-            "Failed to load saved workouts:",
-            error
+          setSavedWorkouts(
+            JSON.parse(storedSaved)
           );
-
+        } catch {
           setSavedWorkouts([]);
         }
       }
 
-      // Completed Workouts
       if (storedCompleted) {
         try {
-          const parsedCompleted: number[] =
-            JSON.parse(storedCompleted);
-
           setCompletedWorkoutIds(
-            parsedCompleted
+            JSON.parse(storedCompleted)
           );
-        } catch (error) {
-          console.error(
-            "Failed to load completed workouts:",
-            error
-          );
-
+        } catch {
           setCompletedWorkoutIds([]);
         }
       }
@@ -114,27 +103,21 @@ export const WorkoutProvider = ({
       setIsLoaded(true);
     };
 
-    /*
-      Running the localStorage state update on the next task
-      avoids the React ESLint synchronous setState-in-effect warning.
-    */
-    const timer = window.setTimeout(
-      loadStoredData,
-      0
-    );
+    const timer =
+      window.setTimeout(
+        loadStoredData,
+        0
+      );
 
-    return () => {
+    return () =>
       window.clearTimeout(timer);
-    };
   }, []);
 
-  // ==================================================
-  // SAVE TODAY'S PLAN
-  // ==================================================
+  // ==========================================
+  // SAVE PLAN
+  // ==========================================
   useEffect(() => {
-    if (!isLoaded) {
-      return;
-    }
+    if (!isLoaded) return;
 
     localStorage.setItem(
       "fitlog-plan",
@@ -142,13 +125,11 @@ export const WorkoutProvider = ({
     );
   }, [todaysPlan, isLoaded]);
 
-  // ==================================================
+  // ==========================================
   // SAVE SAVED WORKOUTS
-  // ==================================================
+  // ==========================================
   useEffect(() => {
-    if (!isLoaded) {
-      return;
-    }
+    if (!isLoaded) return;
 
     localStorage.setItem(
       "fitlog-saved",
@@ -156,51 +137,67 @@ export const WorkoutProvider = ({
     );
   }, [savedWorkouts, isLoaded]);
 
-  // ==================================================
+  // ==========================================
   // SAVE COMPLETED WORKOUTS
-  // ==================================================
+  // ==========================================
   useEffect(() => {
-    if (!isLoaded) {
-      return;
-    }
+    if (!isLoaded) return;
 
     localStorage.setItem(
       "fitlog-completed",
-      JSON.stringify(completedWorkoutIds)
+      JSON.stringify(
+        completedWorkoutIds
+      )
     );
-  }, [completedWorkoutIds, isLoaded]);
+  }, [
+    completedWorkoutIds,
+    isLoaded,
+  ]);
 
-  // ==================================================
+  // ==========================================
   // ADD TO TODAY'S PLAN
-  // ==================================================
-  const addToPlan = (workout: Workout) => {
-    setTodaysPlan((previousPlan) => {
-      const alreadyExists =
-        previousPlan.some(
-          (item) =>
-            item.id === workout.id
-        );
+  // Maximum 5 workouts
+  // Returns true if successful
+  // ==========================================
+  const addToPlan = (
+    workout: Workout
+  ): boolean => {
+    const alreadyExists =
+      todaysPlan.some(
+        (item) =>
+          item.id === workout.id
+      );
 
-      if (alreadyExists) {
-        return previousPlan;
-      }
+    if (alreadyExists) {
+      return false;
+    }
 
-      return [
+    if (todaysPlan.length >= 5) {
+      return false;
+    }
+
+    setTodaysPlan(
+      (previousPlan) => [
         ...previousPlan,
         workout,
-      ];
-    });
+      ]
+    );
+
+    return true;
   };
 
-  // ==================================================
-  // REMOVE FROM TODAY'S PLAN
-  // ==================================================
-  const removeFromPlan = (id: number) => {
-    setTodaysPlan((previousPlan) =>
-      previousPlan.filter(
-        (workout) =>
-          workout.id !== id
-      )
+  // ==========================================
+  // REMOVE FROM PLAN
+  // ==========================================
+  const removeFromPlan = (
+    id: number
+  ) => {
+    setTodaysPlan(
+      (previousPlan) =>
+        previousPlan.filter(
+          (workout) =>
+            workout.id !== id
+        )
     );
 
     setCompletedWorkoutIds(
@@ -212,10 +209,12 @@ export const WorkoutProvider = ({
     );
   };
 
-  // ==================================================
+  // ==========================================
   // ADD TO SAVED
-  // ==================================================
-  const addToSaved = (workout: Workout) => {
+  // ==========================================
+  const addToSaved = (
+    workout: Workout
+  ) => {
     setSavedWorkouts(
       (previousSaved) => {
         const alreadyExists =
@@ -237,9 +236,9 @@ export const WorkoutProvider = ({
     );
   };
 
-  // ==================================================
+  // ==========================================
   // REMOVE FROM SAVED
-  // ==================================================
+  // ==========================================
   const removeFromSaved = (
     id: number
   ) => {
@@ -252,20 +251,19 @@ export const WorkoutProvider = ({
     );
   };
 
-  // ==================================================
-  // MARK WORKOUT AS DONE
-  // ==================================================
+  // ==========================================
+  // MARK AS DONE
+  // ==========================================
   const markAsDone = (
     id: number
   ) => {
     setCompletedWorkoutIds(
       (previousCompleted) => {
-        const alreadyDone =
+        if (
           previousCompleted.includes(
             id
-          );
-
-        if (alreadyDone) {
+          )
+        ) {
           return previousCompleted;
         }
 
@@ -277,9 +275,9 @@ export const WorkoutProvider = ({
     );
   };
 
-  // ==================================================
-  // CHECK IF WORKOUT IS IN TODAY'S PLAN
-  // ==================================================
+  // ==========================================
+  // CHECK FUNCTIONS
+  // ==========================================
   const isInPlan = (
     id: number
   ) => {
@@ -289,9 +287,6 @@ export const WorkoutProvider = ({
     );
   };
 
-  // ==================================================
-  // CHECK IF WORKOUT IS SAVED
-  // ==================================================
   const isSaved = (
     id: number
   ) => {
@@ -301,9 +296,6 @@ export const WorkoutProvider = ({
     );
   };
 
-  // ==================================================
-  // CHECK IF WORKOUT IS COMPLETED
-  // ==================================================
   const isDone = (
     id: number
   ) => {
@@ -312,9 +304,6 @@ export const WorkoutProvider = ({
     );
   };
 
-  // ==================================================
-  // CONTEXT
-  // ==================================================
   return (
     <WorkoutContext.Provider
       value={{
@@ -341,9 +330,6 @@ export const WorkoutProvider = ({
   );
 };
 
-// ==================================================
-// CUSTOM CONTEXT HOOK
-// ==================================================
 export const useWorkoutContext =
   () => {
     const context =
