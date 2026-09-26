@@ -29,7 +29,7 @@ const PlanWorkoutCard = ({
       }`}
     >
       <div className="flex flex-col gap-4 lg:flex-row lg:items-center">
-
+        {/* IMAGE */}
         <div className="relative h-[145px] w-full shrink-0 overflow-hidden rounded-lg sm:h-[110px] lg:h-[76px] lg:w-[135px]">
           <Image
             src={workout.image}
@@ -42,7 +42,7 @@ const PlanWorkoutCard = ({
           />
         </div>
 
- 
+        {/* INFO */}
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-2">
             <h3
@@ -66,39 +66,84 @@ const PlanWorkoutCard = ({
             {workout.equipment}
           </p>
 
-
+          {/* STATS */}
           <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2 text-[11px] text-gray-400">
+            {/* DURATION */}
             <span className="flex items-center gap-1.5">
-              <Image
-                src="/assets/clock.png"
-                alt=""
-                width={14}
-                height={14}
-                className="opacity-70 brightness-0 invert"
+              <span
+                className="h-[14px] w-[14px] bg-[#c9ff00]"
+                style={{
+                  WebkitMaskImage:
+                    "url('/assets/clock.png')",
+                  maskImage:
+                    "url('/assets/clock.png')",
+                  WebkitMaskRepeat:
+                    "no-repeat",
+                  maskRepeat:
+                    "no-repeat",
+                  WebkitMaskPosition:
+                    "center",
+                  maskPosition:
+                    "center",
+                  WebkitMaskSize:
+                    "contain",
+                  maskSize:
+                    "contain",
+                }}
               />
 
               {workout.duration} min
             </span>
 
+            {/* CALORIES */}
             <span className="flex items-center gap-1.5">
-              <Image
-                src="/assets/fire.png"
-                alt=""
-                width={14}
-                height={14}
-                className="opacity-70 brightness-0 invert"
+              <span
+                className="h-[14px] w-[14px] bg-[#c9ff00]"
+                style={{
+                  WebkitMaskImage:
+                    "url('/assets/fire.png')",
+                  maskImage:
+                    "url('/assets/fire.png')",
+                  WebkitMaskRepeat:
+                    "no-repeat",
+                  maskRepeat:
+                    "no-repeat",
+                  WebkitMaskPosition:
+                    "center",
+                  maskPosition:
+                    "center",
+                  WebkitMaskSize:
+                    "contain",
+                  maskSize:
+                    "contain",
+                }}
               />
 
               {workout.caloriesBurned} kcal
             </span>
 
+            {/* RATING */}
             <span className="flex items-center gap-1.5">
-              <Image
-                src="/assets/star.png"
-                alt=""
-                width={14}
-                height={14}
-                className="opacity-70 brightness-0 invert"
+              <span
+                className="h-[14px] w-[14px] bg-[#c9ff00]"
+                style={{
+                  WebkitMaskImage:
+                    "url('/assets/star.png')",
+                  maskImage:
+                    "url('/assets/star.png')",
+                  WebkitMaskRepeat:
+                    "no-repeat",
+                  maskRepeat:
+                    "no-repeat",
+                  WebkitMaskPosition:
+                    "center",
+                  maskPosition:
+                    "center",
+                  WebkitMaskSize:
+                    "contain",
+                  maskSize:
+                    "contain",
+                }}
               />
 
               {workout.rating}
@@ -106,7 +151,7 @@ const PlanWorkoutCard = ({
           </div>
         </div>
 
-
+        {/* ACTIONS */}
         <div className="flex shrink-0 flex-wrap items-center gap-2 lg:justify-end">
           <Link
             href={`/workout/${workout.id}`}
