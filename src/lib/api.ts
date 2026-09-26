@@ -22,20 +22,29 @@ export async function getWorkouts(): Promise<Workout[]> {
   }
 }
 
-// Get one workout by ID
+// Get a single workout
 export async function getWorkoutById(
   id: string | number
 ): Promise<Workout | null> {
   try {
+    // First try the single workout endpoint
     const response = await fetch(`${API_URL}/${id}`);
 
-    if (!response.ok) {
-      return null;
+    if (response.ok) {
+      const data: Workout = await response.json();
+
+      return data;
     }
 
-    const data: Workout = await response.json();
+    // Fallback:
+    // Fetch all workouts and find the matching ID
+    const workouts = await getWorkouts();
 
-    return data;
+    const workout = workouts.find(
+      (item) => item.id === Number(id)
+    );
+
+    return workout ?? null;
   } catch (error) {
     console.error("Workout Details API Error:", error);
 

@@ -1,7 +1,25 @@
-export default function WorkoutDetailsPage() {
-  return (
-    <main>
-      <p>Workout details page starter.</p>
-    </main>
-  );
+import { notFound } from "next/navigation";
+
+import WorkoutDetails from "@/components/WorkoutDetails";
+import { getWorkoutById } from "@/lib/api";
+
+interface WorkoutDetailsPageProps {
+  params: Promise<{
+    id: string;
+  }>;
+}
+
+export default async function WorkoutDetailsPage({
+  params,
+}: WorkoutDetailsPageProps) {
+  const { id } = await params;
+
+  const workout = await getWorkoutById(id);
+
+  // Invalid ID or workout not found
+  if (!workout) {
+    notFound();
+  }
+
+  return <WorkoutDetails workout={workout} />;
 }
