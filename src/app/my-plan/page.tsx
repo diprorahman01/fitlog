@@ -1,7 +1,12 @@
 "use client";
 
 import Image from "next/image";
-import { useMemo, useState } from "react";
+import {
+  Suspense,
+  useMemo,
+  useState,
+} from "react";
+
 import {
   useRouter,
   useSearchParams,
@@ -15,11 +20,20 @@ import StatsCard from "@/components/StatsCard";
 import { useWorkoutContext } from "@/context/WorkoutContext";
 
 type ActiveTab = "plan" | "saved";
-type SortOption = "duration" | "calories" | "rating";
 
-export default function MyPlanPage() {
+type SortOption =
+  | "duration"
+  | "calories"
+  | "rating";
+
+// ==========================================
+// MAIN MY PLAN CONTENT
+// ==========================================
+function MyPlanContent() {
   const router = useRouter();
-  const searchParams = useSearchParams();
+
+  const searchParams =
+    useSearchParams();
 
   const {
     todaysPlan,
@@ -34,24 +48,43 @@ export default function MyPlanPage() {
   const [sortBy, setSortBy] =
     useState<SortOption>("duration");
 
-  const [searchTerm, setSearchTerm] =
-    useState("");
+  const [
+    searchTerm,
+    setSearchTerm,
+  ] = useState("");
 
-  const [toastMessage, setToastMessage] =
-    useState("");
+  const [
+    toastMessage,
+    setToastMessage,
+  ] = useState("");
 
+  // ======================================
   // ACTIVE TAB
+  // ======================================
   const activeTab: ActiveTab =
     searchParams.get("tab") === "saved"
       ? "saved"
       : "plan";
 
-  const changeTab = (tab: ActiveTab) => {
+  // ======================================
+  // CHANGE TAB
+  // ======================================
+  const changeTab = (
+    tab: ActiveTab
+  ) => {
     setSearchTerm("");
-    router.push(`/my-plan?tab=${tab}`);
+
+    router.push(
+      `/my-plan?tab=${tab}`
+    );
   };
 
-  const showToast = (message: string) => {
+  // ======================================
+  // TOAST
+  // ======================================
+  const showToast = (
+    message: string
+  ) => {
     setToastMessage(message);
 
     window.setTimeout(() => {
@@ -59,72 +92,114 @@ export default function MyPlanPage() {
     }, 2500);
   };
 
-  // METRICS
-  const exercises = todaysPlan.length;
+  // ======================================
+  // SUMMARY
+  // ======================================
+  const exercises =
+    todaysPlan.length;
 
-  const minutes = todaysPlan.reduce(
-    (total, workout) =>
-      total + workout.duration,
-    0
-  );
+  const minutes =
+    todaysPlan.reduce(
+      (total, workout) =>
+        total + workout.duration,
+      0
+    );
 
-  const calories = todaysPlan.reduce(
-    (total, workout) =>
-      total + workout.caloriesBurned,
-    0
-  );
+  const calories =
+    todaysPlan.reduce(
+      (total, workout) =>
+        total +
+        workout.caloriesBurned,
+      0
+    );
 
-
-  // TAB DATA
+  // ======================================
+  // ACTIVE TAB DATA
+  // ======================================
   const activeWorkouts =
     activeTab === "plan"
       ? todaysPlan
       : savedWorkouts;
 
-
+  // ======================================
   // SEARCH + SORT
-  const visibleWorkouts = useMemo(() => {
-    const query =
-      searchTerm.trim().toLowerCase();
+  // ======================================
+  const visibleWorkouts =
+    useMemo(() => {
+      const query =
+        searchTerm
+          .trim()
+          .toLowerCase();
 
-    let workouts = [...activeWorkouts];
+      let workouts = [
+        ...activeWorkouts,
+      ];
 
-    if (query) {
-      workouts = workouts.filter((workout) => {
-        const nameMatch = workout.name
-          .toLowerCase()
-          .includes(query);
+      // Search
+      if (query) {
+        workouts =
+          workouts.filter(
+            (workout) => {
+              const nameMatch =
+                workout.name
+                  .toLowerCase()
+                  .includes(query);
 
-        const tagMatch =
-          workout.muscleGroups.some((muscle) =>
-            muscle.toLowerCase().includes(query)
+              const tagMatch =
+                workout.muscleGroups.some(
+                  (muscle) =>
+                    muscle
+                      .toLowerCase()
+                      .includes(query)
+                );
+
+              return (
+                nameMatch ||
+                tagMatch
+              );
+            }
           );
+      }
 
-        return nameMatch || tagMatch;
-      });
-    }
+      // Sort duration
+      if (
+        sortBy === "duration"
+      ) {
+        workouts.sort(
+          (a, b) =>
+            a.duration -
+            b.duration
+        );
+      }
 
-    if (sortBy === "duration") {
-      workouts.sort(
-        (a, b) => a.duration - b.duration
-      );
-    }
+      // Sort calories
+      if (
+        sortBy === "calories"
+      ) {
+        workouts.sort(
+          (a, b) =>
+            b.caloriesBurned -
+            a.caloriesBurned
+        );
+      }
 
-    if (sortBy === "calories") {
-      workouts.sort(
-        (a, b) =>
-          b.caloriesBurned - a.caloriesBurned
-      );
-    }
+      // Sort rating
+      if (
+        sortBy === "rating"
+      ) {
+        workouts.sort(
+          (a, b) =>
+            b.rating -
+            a.rating
+        );
+      }
 
-    if (sortBy === "rating") {
-      workouts.sort(
-        (a, b) => b.rating - a.rating
-      );
-    }
-
-    return workouts;
-  }, [activeWorkouts, searchTerm, sortBy]);
+      return workouts;
+    }, [
+      activeWorkouts,
+      searchTerm,
+      sortBy,
+    ]);
 
   return (
     <>
@@ -136,10 +211,13 @@ export default function MyPlanPage() {
           </h1>
 
           <p className="mt-3 text-sm text-gray-500">
-            Cap of five lifts for today. Finish them, then load more.
+            Cap of five lifts for
+            today. Finish them, then
+            load more.
           </p>
         </div>
 
+        {/* SUMMARY */}
         <div className="mt-8 overflow-hidden rounded-2xl border border-[#252a31] bg-[#15181e]">
           <div className="grid grid-cols-1 divide-y divide-[#252a31] sm:grid-cols-3 sm:divide-x sm:divide-y-0">
             <StatsCard
@@ -160,14 +238,22 @@ export default function MyPlanPage() {
           </div>
         </div>
 
-        {/* TABS / SORT / SEARCH */}
+        {/* CONTROLS */}
         <MyPlanControls
           activeTab={activeTab}
           sortBy={sortBy}
-          searchTerm={searchTerm}
-          onTabChange={changeTab}
-          onSortChange={setSortBy}
-          onSearchChange={setSearchTerm}
+          searchTerm={
+            searchTerm
+          }
+          onTabChange={
+            changeTab
+          }
+          onSortChange={
+            setSortBy
+          }
+          onSearchChange={
+            setSearchTerm
+          }
         />
 
         {/* CONTENT */}
@@ -178,9 +264,11 @@ export default function MyPlanPage() {
                 Loading workouts...
               </p>
             </div>
-          ) : activeWorkouts.length === 0 ? (
+          ) : activeWorkouts.length ===
+            0 ? (
             <EmptyPlan />
-          ) : visibleWorkouts.length === 0 ? (
+          ) : visibleWorkouts.length ===
+            0 ? (
             <div className="flex min-h-[250px] items-center justify-center rounded-xl border border-dashed border-[#2a2f37] px-4 text-center">
               <div>
                 <h3 className="text-lg font-black uppercase text-white">
@@ -188,50 +276,72 @@ export default function MyPlanPage() {
                 </h3>
 
                 <p className="mt-2 text-sm text-gray-500">
-                  Try another workout name or muscle tag.
+                  Try another workout
+                  name or muscle tag.
                 </p>
               </div>
             </div>
           ) : (
             <div className="space-y-4">
-              {visibleWorkouts.map((workout) => (
-                <PlanWorkoutCard
-                  key={workout.id}
-                  workout={workout}
-                  type={activeTab}
-                  isDone={
-                    activeTab === "plan"
-                      ? isDone(workout.id)
-                      : false
-                  }
-                  onMarkDone={
-                    activeTab === "plan"
-                      ? () => {
-                          markAsDone(workout.id);
-
-                          showToast(
-                            `${workout.name} marked as done`
-                          );
-                        }
-                      : undefined
-                  }
-                  onRemove={() => {
-                    if (activeTab === "plan") {
-                      removeFromPlan(workout.id);
-
-                      showToast(
-                        `${workout.name} removed from today's plan`
-                      );
-                    } else {
-                      removeFromSaved(workout.id);
-
-                      showToast(
-                        `${workout.name} removed from saved workouts`
-                      );
+              {visibleWorkouts.map(
+                (workout) => (
+                  <PlanWorkoutCard
+                    key={
+                      workout.id
                     }
-                  }}
-                />
-              ))}
+                    workout={
+                      workout
+                    }
+                    type={
+                      activeTab
+                    }
+                    isDone={
+                      activeTab ===
+                      "plan"
+                        ? isDone(
+                            workout.id
+                          )
+                        : false
+                    }
+                    onMarkDone={
+                      activeTab ===
+                      "plan"
+                        ? () => {
+                            markAsDone(
+                              workout.id
+                            );
+
+                            showToast(
+                              `${workout.name} marked as done`
+                            );
+                          }
+                        : undefined
+                    }
+                    onRemove={() => {
+                      if (
+                        activeTab ===
+                        "plan"
+                      ) {
+                        removeFromPlan(
+                          workout.id
+                        );
+
+                        showToast(
+                          `${workout.name} removed from today's plan`
+                        );
+                      } else {
+                        removeFromSaved(
+                          workout.id
+                        );
+
+                        showToast(
+                          `${workout.name} removed from saved workouts`
+                        );
+                      }
+                    }}
+                  />
+                )
+              )}
             </div>
           )}
         </div>
@@ -257,5 +367,25 @@ export default function MyPlanPage() {
         </div>
       )}
     </>
+  );
+}
+
+// ==========================================
+// PAGE
+// Suspense is required for useSearchParams()
+// ==========================================
+export default function MyPlanPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="mx-auto flex min-h-[500px] w-full max-w-[1440px] items-center justify-center px-4">
+          <p className="text-sm text-gray-400">
+            Loading workouts...
+          </p>
+        </div>
+      }
+    >
+      <MyPlanContent />
+    </Suspense>
   );
 }
