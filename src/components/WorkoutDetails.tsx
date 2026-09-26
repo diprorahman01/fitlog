@@ -10,9 +10,7 @@ interface WorkoutDetailsProps {
   workout: Workout;
 }
 
-const WorkoutDetails = ({
-  workout,
-}: WorkoutDetailsProps) => {
+const WorkoutDetails = ({ workout }: WorkoutDetailsProps) => {
   const {
     todaysPlan,
     addToPlan,
@@ -21,26 +19,13 @@ const WorkoutDetails = ({
     isSaved,
   } = useWorkoutContext();
 
-  const [
-    toastMessage,
-    setToastMessage,
-  ] = useState("");
+  const [toastMessage, setToastMessage] = useState("");
 
-  const workoutInPlan =
-    isInPlan(workout.id);
+  const workoutInPlan = isInPlan(workout.id);
+  const workoutSaved = isSaved(workout.id);
+  const planIsFull = todaysPlan.length >= 5;
 
-  const workoutSaved =
-    isSaved(workout.id);
-
-  const planIsFull =
-    todaysPlan.length >= 5;
-
-  // =========================================
-  // TOAST
-  // =========================================
-  const showToast = (
-    message: string
-  ) => {
+  const showToast = (message: string) => {
     setToastMessage(message);
 
     window.setTimeout(() => {
@@ -48,50 +33,32 @@ const WorkoutDetails = ({
     }, 2500);
   };
 
-  // =========================================
-  // ADD TO PLAN
-  // =========================================
   const handleAddToPlan = () => {
     if (workoutInPlan) {
-      showToast(
-        "Already in today's plan"
-      );
+      showToast("Already in today's plan");
       return;
     }
 
     if (planIsFull) {
-      showToast(
-        "Today's plan can contain a maximum of 5 workouts"
-      );
+      showToast("Today's plan can contain a maximum of 5 workouts");
       return;
     }
 
-    const added =
-      addToPlan(workout);
+    const added = addToPlan(workout);
 
     if (added) {
-      showToast(
-        "Added to today's plan"
-      );
+      showToast("Added to today's plan");
     }
   };
 
-  // =========================================
-  // SAVE
-  // =========================================
   const handleSaveWorkout = () => {
     if (workoutSaved) {
-      showToast(
-        "Workout already saved"
-      );
+      showToast("Workout already saved");
       return;
     }
 
     addToSaved(workout);
-
-    showToast(
-      "Saved for later"
-    );
+    showToast("Saved for later");
   };
 
   return (
@@ -101,7 +68,7 @@ const WorkoutDetails = ({
           {/* IMAGE */}
           <div className="relative min-h-[420px] overflow-hidden rounded-2xl border border-[#252a31] bg-[#15181e] sm:min-h-[520px] lg:min-h-[700px]">
             <Image
-              src="/assets/workout-details.png"
+              src={workout.image}
               alt={workout.name}
               fill
               priority
@@ -110,82 +77,54 @@ const WorkoutDetails = ({
             />
           </div>
 
-          {/* CONTENT */}
           <div className="flex flex-col">
-            <h1 className="text-3xl font-black uppercase leading-tight text-white sm:text-4xl lg:text-[42px]">
+            <h1 className="text-3xl font-black uppercase text-white sm:text-4xl lg:text-[42px]">
               {workout.name}
             </h1>
 
-            <p className="mt-3 text-sm leading-6 text-gray-400 sm:text-base sm:leading-7">
+            <p className="mt-3 text-sm leading-6 text-gray-400 sm:text-base">
               {workout.description}
             </p>
 
-            {/* TAGS */}
             <div className="mt-5 flex flex-wrap gap-2">
-              {workout.muscleGroups.map(
-                (muscle) => (
-                  <span
-                    key={muscle}
-                    className="rounded-full bg-[#c9ff00] px-4 py-1.5 text-xs font-black uppercase text-black"
-                  >
-                    {muscle}
-                  </span>
-                )
-              )}
+              {workout.muscleGroups.map((muscle) => (
+                <span
+                  key={muscle}
+                  className="rounded-full bg-[#c9ff00] px-4 py-1.5 text-xs font-black uppercase text-black"
+                >
+                  {muscle}
+                </span>
+              ))}
             </div>
 
             {/* SPECS */}
             <div className="mt-8 overflow-hidden rounded-xl border border-[#292e36] bg-[#15181e]">
               {[
-                [
-                  "Equipment",
-                  workout.equipment,
-                ],
-                [
-                  "Difficulty",
-                  workout.difficulty,
-                ],
-                [
-                  "Sets",
-                  workout.sets,
-                ],
-                [
-                  "Reps",
-                  workout.reps,
-                ],
-                [
-                  "Duration",
-                  `${workout.duration} min`,
-                ],
-                [
-                  "Calories",
-                  `${workout.caloriesBurned} kcal`,
-                ],
-                [
-                  "Rating",
-                  workout.rating,
-                ],
-              ].map(
-                ([label, value], index, array) => (
-                  <div
-                    key={label}
-                    className={`flex items-center justify-between gap-4 px-5 py-4 ${
-                      index <
-                      array.length - 1
-                        ? "border-b border-[#292e36]"
-                        : ""
-                    }`}
-                  >
-                    <span className="text-xs font-bold uppercase tracking-wider text-gray-500">
-                      {label}
-                    </span>
+                ["Equipment", workout.equipment],
+                ["Difficulty", workout.difficulty],
+                ["Sets", workout.sets],
+                ["Reps", workout.reps],
+                ["Duration", `${workout.duration} min`],
+                ["Calories", `${workout.caloriesBurned} kcal`],
+                ["Rating", workout.rating],
+              ].map(([label, value], index, array) => (
+                <div
+                  key={label}
+                  className={`flex items-center justify-between gap-4 px-5 py-4 ${
+                    index < array.length - 1
+                      ? "border-b border-[#292e36]"
+                      : ""
+                  }`}
+                >
+                  <span className="text-xs font-bold uppercase tracking-wider text-gray-500">
+                    {label}
+                  </span>
 
-                    <span className="text-right text-sm text-gray-200">
-                      {value}
-                    </span>
-                  </div>
-                )
-              )}
+                  <span className="text-right text-sm text-gray-200">
+                    {value}
+                  </span>
+                </div>
+              ))}
             </div>
 
             {/* INSTRUCTIONS */}
@@ -195,25 +134,15 @@ const WorkoutDetails = ({
               </h2>
 
               <ol className="mt-5 space-y-4">
-                {workout.instructions.map(
-                  (
-                    instruction,
-                    index
-                  ) => (
-                    <li
-                      key={index}
-                      className="flex gap-3 text-sm leading-6 text-gray-400"
-                    >
-                      <span className="shrink-0 text-gray-500">
-                        {index + 1}.
-                      </span>
-
-                      <span>
-                        {instruction}
-                      </span>
-                    </li>
-                  )
-                )}
+                {workout.instructions.map((instruction, index) => (
+                  <li
+                    key={index}
+                    className="flex gap-3 text-sm leading-6 text-gray-400"
+                  >
+                    <span className="text-gray-500">{index + 1}.</span>
+                    <span>{instruction}</span>
+                  </li>
+                ))}
               </ol>
             </div>
 
@@ -221,84 +150,58 @@ const WorkoutDetails = ({
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               <button
                 type="button"
-                onClick={
-                  handleAddToPlan
-                }
-                disabled={
-                  workoutInPlan ||
-                  planIsFull
-                }
+                onClick={handleAddToPlan}
+                disabled={workoutInPlan || planIsFull}
                 className={`inline-flex min-h-12 items-center justify-center gap-2 rounded-lg px-6 text-sm font-extrabold transition ${
-                  workoutInPlan ||
-                  planIsFull
+                  workoutInPlan || planIsFull
                     ? "cursor-not-allowed bg-[#667a16] text-black/60"
                     : "bg-[#c9ff00] text-black hover:bg-[#b8eb00]"
                 }`}
               >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="18"
-                  height="18"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                >
-                  <rect
-                    width="18"
-                    height="18"
-                    x="3"
-                    y="4"
-                    rx="2"
-                  />
-                  <path d="M8 2v4" />
-                  <path d="M16 2v4" />
-                  <path d="M3 10h18" />
-                  <path d="M12 14v4" />
-                  <path d="M10 16h4" />
-                </svg>
+                <Image
+                  src="/assets/calendar-plus.png"
+                  alt=""
+                  width={18}
+                  height={18}
+                />
 
                 {workoutInPlan
                   ? "Added to today's plan"
                   : planIsFull
-                  ? "Plan is full"
-                  : "Add to today's plan"}
+                    ? "Plan is full"
+                    : "Add to today's plan"}
               </button>
 
               <button
                 type="button"
-                onClick={
-                  handleSaveWorkout
-                }
+                onClick={handleSaveWorkout}
                 className="inline-flex min-h-12 items-center justify-center gap-2 rounded-lg border border-[#3a414c] px-6 text-sm font-semibold text-gray-200 transition hover:border-[#c9ff00] hover:text-[#c9ff00]"
               >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="17"
-                  height="17"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                >
-                  <path d="M19 21 12 16 5 21V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" />
-                </svg>
+                <Image
+                  src="/assets/bookmark.png"
+                  alt=""
+                  width={17}
+                  height={17}
+                  className="brightness-0 invert"
+                />
 
-                {workoutSaved
-                  ? "Saved"
-                  : "Save for later"}
+                {workoutSaved ? "Saved" : "Save for later"}
               </button>
             </div>
           </div>
         </div>
       </section>
 
-      {/* TOAST */}
       {toastMessage && (
         <div className="fixed bottom-6 left-1/2 z-50 w-full max-w-sm -translate-x-1/2 px-4">
           <div className="flex items-center gap-3 rounded-xl border border-[#38402f] bg-[#181d14] px-5 py-4 shadow-2xl">
-            <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#c9ff00] text-black">
-              ✓
+            <span className="flex h-7 w-7 items-center justify-center rounded-full bg-[#c9ff00]">
+              <Image
+                src="/assets/check.png"
+                alt=""
+                width={14}
+                height={14}
+              />
             </span>
 
             <p className="text-sm font-medium text-white">

@@ -16,7 +16,6 @@ export default async function WorkoutDetailsPage({
 
   const workout = await getWorkoutById(id);
 
-  // Invalid ID or workout not found
   if (!workout) {
     notFound();
   }

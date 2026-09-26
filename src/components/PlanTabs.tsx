@@ -8,11 +8,11 @@ const PlanTabs = ({
   onChange,
 }: PlanTabsProps) => {
   return (
-    <div className="inline-flex rounded-xl border border-[#252a31] bg-[#111419] p-1">
+    <div className="inline-flex w-fit rounded-xl border border-[#252a31] bg-[#111419] p-1">
       <button
         type="button"
         onClick={() => onChange("plan")}
-        className={`rounded-lg px-5 py-2 text-xs font-semibold transition sm:px-7 ${
+        className={`cursor-pointer rounded-lg px-5 py-2 text-xs font-semibold transition sm:px-7 ${
           activeTab === "plan"
             ? "bg-[#252a33] text-white"
             : "text-gray-500 hover:text-white"
@@ -24,7 +24,7 @@ const PlanTabs = ({
       <button
         type="button"
         onClick={() => onChange("saved")}
-        className={`rounded-lg px-5 py-2 text-xs font-semibold transition sm:px-7 ${
+        className={`cursor-pointer rounded-lg px-5 py-2 text-xs font-semibold transition sm:px-7 ${
           activeTab === "saved"
             ? "bg-[#252a33] text-white"
             : "text-gray-500 hover:text-white"

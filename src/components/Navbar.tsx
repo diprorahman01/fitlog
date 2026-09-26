@@ -9,7 +9,6 @@ import { useWorkoutContext } from "@/context/WorkoutContext";
 
 const Navbar = () => {
   const pathname = usePathname();
-
   const [menuOpen, setMenuOpen] = useState(false);
 
   const {
@@ -17,19 +16,20 @@ const Navbar = () => {
     savedWorkouts,
   } = useWorkoutContext();
 
-  // Real dynamic numbers
   const planCount = todaysPlan.length;
   const savedCount = savedWorkouts.length;
 
   const isWorkoutActive =
-    pathname === "/" || pathname.startsWith("/workout");
+    pathname === "/" ||
+    pathname.startsWith("/workout");
 
-  const isPlanActive = pathname.startsWith("/my-plan");
+  const isPlanActive =
+    pathname.startsWith("/my-plan");
 
   return (
     <header className="w-full border-b border-[#23272f] bg-[#0b0d10]">
       <nav className="mx-auto flex min-h-[82px] max-w-[1440px] items-center justify-between px-4 sm:px-6 lg:px-8">
-        {/* LOGO */}
+
         <Link
           href="/"
           className="flex items-center gap-3"
@@ -63,7 +63,7 @@ const Navbar = () => {
           </Link>
 
           <Link
-            href="/my-plan"
+            href="/my-plan?tab=plan"
             className={`rounded-full px-5 py-2 text-sm font-semibold transition-all duration-200 ${
               isPlanActive
                 ? "bg-[#18280d] text-[#c9ff00]"
@@ -74,10 +74,11 @@ const Navbar = () => {
           </Link>
         </div>
 
-        {/* DESKTOP COUNTERS */}
+
         <div className="hidden items-center gap-7 md:flex">
+
           <Link
-            href="/my-plan"
+            href="/my-plan?tab=plan"
             className="flex items-center gap-2 text-sm text-gray-300 transition hover:text-white"
           >
             <span>Plan</span>
@@ -87,8 +88,9 @@ const Navbar = () => {
             </span>
           </Link>
 
+
           <Link
-            href="/my-plan"
+            href="/my-plan?tab=saved"
             className="flex items-center gap-2 text-sm text-gray-400 transition hover:text-white"
           >
             <span>Saved</span>
@@ -99,7 +101,7 @@ const Navbar = () => {
           </Link>
         </div>
 
-        {/* MOBILE MENU BUTTON */}
+
         <button
           type="button"
           aria-label="Toggle navigation menu"
@@ -142,7 +144,6 @@ const Navbar = () => {
         </button>
       </nav>
 
-      {/* MOBILE MENU */}
       {menuOpen && (
         <div className="border-t border-[#23272f] bg-[#0b0d10] px-4 pb-5 pt-4 md:hidden">
           <div className="mx-auto flex max-w-[1440px] flex-col gap-2">
@@ -159,7 +160,7 @@ const Navbar = () => {
             </Link>
 
             <Link
-              href="/my-plan"
+              href="/my-plan?tab=plan"
               onClick={() => setMenuOpen(false)}
               className={`rounded-lg px-4 py-3 text-sm font-semibold transition ${
                 isPlanActive
@@ -172,7 +173,7 @@ const Navbar = () => {
 
             <div className="mt-2 grid grid-cols-2 gap-3 border-t border-[#23272f] pt-4">
               <Link
-                href="/my-plan"
+                href="/my-plan?tab=plan"
                 onClick={() => setMenuOpen(false)}
                 className="flex items-center justify-between rounded-lg bg-[#13161b] px-4 py-3"
               >
@@ -186,7 +187,7 @@ const Navbar = () => {
               </Link>
 
               <Link
-                href="/my-plan"
+                href="/my-plan?tab=saved"
                 onClick={() => setMenuOpen(false)}
                 className="flex items-center justify-between rounded-lg bg-[#13161b] px-4 py-3"
               >

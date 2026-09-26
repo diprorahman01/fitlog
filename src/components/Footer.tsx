@@ -5,9 +5,6 @@ const Footer = () => {
   return (
     <footer className="mt-10 border-t border-[#23272f] bg-[#0b0d10]">
       <div className="mx-auto flex w-full max-w-[1440px] flex-col gap-5 px-4 py-8 sm:px-6 md:flex-row md:items-center md:justify-between lg:px-8">
-        {/* =========================
-            LEFT - BRAND
-        ========================== */}
         <Link
           href="/"
           className="flex items-center gap-2"
@@ -24,10 +21,6 @@ const Footer = () => {
             FITLOG
           </span>
         </Link>
-
-        {/* =========================
-            RIGHT - COPYRIGHT
-        ========================== */}
         <p className="text-xs leading-5 text-gray-500 sm:text-sm md:text-right">
           © 2026 FitLog — Workout Library.{" "}
           <span className="italic text-gray-400">
