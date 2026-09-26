@@ -6,12 +6,10 @@ const WorkoutLibrary = async () => {
 
   return (
     <section
-      id="workouts"
-      className="mx-auto w-full max-w-[1440px] px-4 py-12 sm:px-6 lg:px-8 lg:py-16"
+      id="library"
+      className="mx-auto w-full max-w-[1440px] scroll-mt-24 px-4 py-12 sm:px-6 lg:px-8 lg:py-16"
     >
-      {/* ==============================
-          SECTION HEADER
-      =============================== */}
+      {/* SECTION HEADER */}
       <div className="mb-7">
         <h2 className="text-2xl font-black uppercase leading-none text-white sm:text-3xl">
           The Library
@@ -22,9 +20,7 @@ const WorkoutLibrary = async () => {
         </p>
       </div>
 
-      {/* ==============================
-          EMPTY / ERROR STATE
-      =============================== */}
+      {/* EMPTY / ERROR STATE */}
       {workouts.length === 0 ? (
         <div className="flex min-h-[250px] items-center justify-center rounded-xl border border-[#252a31] bg-[#15181e]">
           <div className="text-center">
@@ -38,9 +34,7 @@ const WorkoutLibrary = async () => {
           </div>
         </div>
       ) : (
-        /* ==============================
-            WORKOUT GRID
-        =============================== */
+        /* WORKOUT GRID */
         <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {workouts.map((workout) => (
             <WorkoutCard

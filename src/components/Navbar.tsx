@@ -5,14 +5,21 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 
+import { useWorkoutContext } from "@/context/WorkoutContext";
+
 const Navbar = () => {
   const pathname = usePathname();
+
   const [menuOpen, setMenuOpen] = useState(false);
 
-  // Temporary values.
-  // Later these will come from WorkoutContext.
-  const planCount = 0;
-  const savedCount = 0;
+  const {
+    todaysPlan,
+    savedWorkouts,
+  } = useWorkoutContext();
+
+  // Real dynamic numbers
+  const planCount = todaysPlan.length;
+  const savedCount = savedWorkouts.length;
 
   const isWorkoutActive =
     pathname === "/" || pathname.startsWith("/workout");
@@ -22,9 +29,7 @@ const Navbar = () => {
   return (
     <header className="w-full border-b border-[#23272f] bg-[#0b0d10]">
       <nav className="mx-auto flex min-h-[82px] max-w-[1440px] items-center justify-between px-4 sm:px-6 lg:px-8">
-        {/* =========================
-            LEFT SIDE - LOGO
-        ========================== */}
+        {/* LOGO */}
         <Link
           href="/"
           className="flex items-center gap-3"
@@ -44,9 +49,7 @@ const Navbar = () => {
           </span>
         </Link>
 
-        {/* =========================
-            DESKTOP CENTER MENU
-        ========================== */}
+        {/* DESKTOP CENTER LINKS */}
         <div className="hidden items-center gap-3 md:flex">
           <Link
             href="/"
@@ -71,9 +74,7 @@ const Navbar = () => {
           </Link>
         </div>
 
-        {/* =========================
-            DESKTOP RIGHT COUNTERS
-        ========================== */}
+        {/* DESKTOP COUNTERS */}
         <div className="hidden items-center gap-7 md:flex">
           <Link
             href="/my-plan"
@@ -98,9 +99,7 @@ const Navbar = () => {
           </Link>
         </div>
 
-        {/* =========================
-            MOBILE HAMBURGER BUTTON
-        ========================== */}
+        {/* MOBILE MENU BUTTON */}
         <button
           type="button"
           aria-label="Toggle navigation menu"
@@ -109,7 +108,6 @@ const Navbar = () => {
           className="flex h-10 w-10 items-center justify-center rounded-lg border border-[#2b3038] text-white transition hover:bg-[#171a20] md:hidden"
         >
           {menuOpen ? (
-            // Close icon
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="22"
@@ -125,7 +123,6 @@ const Navbar = () => {
               <path d="m6 6 12 12" />
             </svg>
           ) : (
-            // Hamburger icon
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="22"
@@ -145,13 +142,10 @@ const Navbar = () => {
         </button>
       </nav>
 
-      {/* =========================
-          MOBILE MENU
-      ========================== */}
+      {/* MOBILE MENU */}
       {menuOpen && (
         <div className="border-t border-[#23272f] bg-[#0b0d10] px-4 pb-5 pt-4 md:hidden">
           <div className="mx-auto flex max-w-[1440px] flex-col gap-2">
-            {/* Workouts */}
             <Link
               href="/"
               onClick={() => setMenuOpen(false)}
@@ -164,7 +158,6 @@ const Navbar = () => {
               Workouts
             </Link>
 
-            {/* My Plan */}
             <Link
               href="/my-plan"
               onClick={() => setMenuOpen(false)}
@@ -177,14 +170,15 @@ const Navbar = () => {
               My Plan
             </Link>
 
-            {/* Mobile Counts */}
             <div className="mt-2 grid grid-cols-2 gap-3 border-t border-[#23272f] pt-4">
               <Link
                 href="/my-plan"
                 onClick={() => setMenuOpen(false)}
                 className="flex items-center justify-between rounded-lg bg-[#13161b] px-4 py-3"
               >
-                <span className="text-sm text-gray-300">Plan</span>
+                <span className="text-sm text-gray-300">
+                  Plan
+                </span>
 
                 <span className="flex h-6 min-w-6 items-center justify-center rounded-full bg-[#c9ff00] px-1.5 text-xs font-bold text-black">
                   {planCount}
@@ -196,7 +190,9 @@ const Navbar = () => {
                 onClick={() => setMenuOpen(false)}
                 className="flex items-center justify-between rounded-lg bg-[#13161b] px-4 py-3"
               >
-                <span className="text-sm text-gray-300">Saved</span>
+                <span className="text-sm text-gray-300">
+                  Saved
+                </span>
 
                 <span className="flex h-6 min-w-6 items-center justify-center rounded-full border border-gray-600 px-1.5 text-xs text-gray-300">
                   {savedCount}
